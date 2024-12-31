@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja Chica</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .currency {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Caja Chica</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('index') }}">Caja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('reporte') }}">Reporte</a>
+                    </li>
+                </ul>
+            </div>
+            <a class="btn btn-danger logout-button" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        </nav>
+
+        <h1 class="text-center mt-5">Caja Chica</h1>
+
+        <form action="{{ url_for('add_transaction') }}" method="post" class="mt-4">
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <input type="text" class="form-control" id="description" name="description" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Cantidad ($):</label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="type">Tipo:</label>
+                <select id="type" name="type" class="form-control" required>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Egreso">Egreso</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+        </form>
+
+        <h2 class="mt-5">Transacciones</h2>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad ($)</th>
+                    <th>Tipo</th>
+                    <th>Fecha y Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction[1] }}</td>
+                    <td class="currency">${{ '%.2f'|format(transaction[2]) }}</td>
+                    <td>{{ transaction[3] }}</td>
+                    <td>{{ transaction[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Resumen del Día</h3>
+                <p><strong>Total Ingresos:</strong> ${{ '%.2f'|format(total_ingresos) }}</p>
+                <p><strong>Total Egresos:</strong> ${{ '%.2f'|format(total_egresos) }}</p>
+            </div>
+            <div class="col-md-6">
+                <h3>Balance Detallado</h3>
+                <p><strong>Valor de Apertura:</strong> ${{ '%.2f'|format(initial_cash) }}</p>
+                <p><strong>Total Ingresos:</strong> +${{ '%.2f'|format(total_ingresos) }}</p>
+                <p><strong>Total Egresos:</strong> -${{ '%.2f'|format(total_egresos) }}</p>
+                <p><strong>Balance Actual:</strong> ${{ '%.2f'|format(balance) }}</p>
+            </div>
+        </div>
+
+        <a class="btn btn-warning mt-3" href="{{ url_for('cierre') }}">Cerrar Caja</a>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
